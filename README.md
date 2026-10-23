@@ -49,4 +49,4 @@ This project uses a modified [Sega Genesis Recompiler](https://github.com/mstan/
 - [ROM-dependent output manifest](docs/ROM-DEPENDENT-MANIFEST.md)
 - [Redistribution review](docs/REDISTRIBUTION-REVIEW.md)
 - [Comparison with Matthew Stan's public Sonic recompilation](docs/UPSTREAM-PRACTICES-COMPARISON.md)
-- [Proposed v0.1.0 release notes](docs/RELEASE-NOTES-v0.1.0.md)
+- [v0.1.0 release notes](docs/RELEASE-NOTES-v0.1.0.md)
