@@ -36,6 +36,14 @@ Keyboard and gamepad inputs are enabled. Arrow keys move; `Z`, `X`, `C` map to G
 
 This is not a traditional cycle-by-cycle console emulator. The recompiler translates configured 68000 routines from the supplied ROM into C at build time. The Windows binary contains those generated translations alongside the runtime, CPU/audio components, and integration code. Some dynamic/interior execution paths retain hybrid interpretation. The Z80 sound processor runs through the included runtime core, with the project-specific bus-request/mailbox scheduling correction.
 
+## AI-Assisted Development
+
+Shinobi3Recomp was developed with substantial assistance from OpenAI Codex and ChatGPT, including ROM analysis, code generation, debugging, testing workflows, and documentation.
+
+The project was directed and managed by its maintainer, with gameplay testing and validation performed on the resulting Windows application. All seven rounds, including the complete ending and post-credits sequence, were personally verified during development.
+
+This project builds upon Matthew Stan's Genesis Recompiler, whose original work and licensing are credited separately.
+
 ## Attribution and licensing
 
 This project uses a modified [Sega Genesis Recompiler](https://github.com/mstan/segagenesisrecomp) by **Matthew Stan**. Copyright and licensing for his work remain with him under the existing PolyForm Noncommercial terms. Original contributions by roccocovs are offered under PolyForm Noncommercial 1.0.0 as scoped in [LICENSE.md](LICENSE.md); this is not an exclusive license for the entire repository. Third-party components retain their separate terms listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). The executable includes ROM-derived translated instructions, and no project license grants rights to Sega game content.
