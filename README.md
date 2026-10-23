@@ -17,7 +17,11 @@ Developers may clone this source repository, provide the compatible ROM locally,
 
 ## Project status
 
-An earlier accepted native-first build was played through all seven rounds, the final boss, the ship-crash ending, and into the horseback credits with `GENESIS_FLOOR=0`. Complete post-credits behavior was not verified. The source candidate independently regenerated matching game C and passed 37/37 non-gameplay CTests. The current GitHub Release executable is copied unchanged from that clean regeneration build and has not received a separate interactive gameplay verification.
+Shinobi3Recomp is **fully playable from beginning to end** on Windows x64. All seven rounds have been completed during development testing, including the game's complete ending sequence.
+
+The v0.1.0 release has also been successfully tested on a separate Windows 11 computer, with working graphics, audio, keyboard input, and DualSense controller support. Save-state functionality is implemented.
+
+The project is considered playable and functional, although minor performance, timing, or compatibility differences from original Sega Genesis hardware may remain. Additional community testing and feedback are welcome.
 
 ## Controls and saves
 
