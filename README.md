@@ -1,6 +1,6 @@
 # Shinobi III Native Recompilation
 
-Shinobi3Recomp is an unofficial native Windows recompilation of *Shinobi III: Return of the Ninja Master*, built with Matthew Stan's Genesis Recompiler and a modified runtime. The Windows release contains statically translated 68000 game instructions and loads a compatible ROM supplied by the user for game data and runtime behavior. The hybrid runtime also retains interpretation for some dynamic execution paths; this does not mean every guest instruction runs as generated native code.
+Shinobi3Recomp is an unofficial native Windows recompilation of *Shinobi III: Return of the Ninja Master*, built with [Matthew Stan's Genesis Recompiler](https://github.com/mstan/segagenesisrecomp) and a modified runtime. The Windows release contains statically translated 68000 game instructions and loads a compatible ROM supplied by the user for game data and runtime behavior. The hybrid runtime also retains interpretation for some dynamic execution paths; this does not mean every guest instruction runs as generated native code.
 
 ## Play the Windows release
 
