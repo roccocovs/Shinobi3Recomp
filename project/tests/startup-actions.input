@@ -1,0 +1,71 @@
+WAIT 360
+PRESS START 10
+WAIT 180
+PRESS START 10
+WAIT 180
+PRESS START 10
+WAIT 180
+PRESS START 10
+WAIT 120
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4152 01F0
+SCREENSHOT stage-entry.bmp
+DUMP_RAM stage-entry.ram
+
+# Run is activated by two separate right presses, then a sustained direction.
+PRESS RIGHT 2
+WAIT 2
+RELEASE RIGHT
+WAIT 2
+PRESS RIGHT 2
+WAIT 2
+HOLD RIGHT
+WAIT 90
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4152 01F0
+SCREENSHOT after-sprint.bmp
+DUMP_RAM after-sprint.ram
+
+# Stop running before the shuriken input; the ROM suppresses this action while
+# Joe is in the running state. Square maps to Genesis Y in the preferred pad layout.
+RELEASE RIGHT
+WAIT 2
+ASSERT_RAM16 FF37E3 3200
+PRESS Y 1
+WAIT 25
+ASSERT_RAM16 FF37E3 3100
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4182 8000
+DUMP_RAM after-shuriken.ram
+WAIT 90
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4152 01F0
+WAIT 15
+
+# Exercise the configured melee and Cross+jump, then Down+melee down-kick.
+PRESS B 1
+WAIT 20
+ASSERT_RAM16 FF412E 8000
+DUMP_RAM after-melee.ram
+PRESS C 1
+WAIT 6
+HOLD DOWN
+PRESS B 1
+WAIT 15
+RELEASE DOWN
+WAIT 80
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4152 01F0
+SCREENSHOT after-downkick.bmp
+DUMP_RAM after-downkick.ram
+
+# Use ninjitsu (Circle maps to Genesis X; Cross/jump maps to Genesis C).
+PRESS X 3
+WAIT 40
+ASSERT_RAM16 FF412E 8000
+WAIT 100
+ASSERT_RAM16 FF412E 8000
+ASSERT_RAM16 FF4152 01F0
+SCREENSHOT after-jitsu.bmp
+DUMP_RAM after-jitsu.ram
+EXIT 0

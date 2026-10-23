@@ -1,0 +1,9 @@
+# Cold-boot callback check. After the boot intro reaches the title callback,
+# FF0032 is 0004; a Start press must move it to the next title/menu state.
+WAIT 360
+ASSERT_RAM16 FF0032 0004
+ASSERT_RAM8 FF000A 41
+PRESS START 30
+WAIT 60
+ASSERT_RAM16 FF0032 000C
+EXIT 0

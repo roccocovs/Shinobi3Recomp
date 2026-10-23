@@ -1,0 +1,2 @@
+# Optional dependency for project/tools/disassemble-rom.py only.
+capstone==5.0.9

@@ -1,0 +1,12 @@
+# Cold-boot path into the Options screen. The final screenshot must not be black.
+WAIT 360
+PRESS START 10
+WAIT 180
+PRESS START 10
+WAIT 150
+PRESS DOWN 10
+WAIT 30
+PRESS START 10
+WAIT 240
+SCREENSHOT options-menu-after-confirm.png
+EXIT 0

@@ -1,0 +1,340 @@
+# Reconstructed Shinobi III build inputs.
+# The previous per-game project was deleted. This config preserves the
+# address roots retained in the conversation; it is a starting point that
+# must be checked against generated-dispatch output before claiming coverage.
+
+[game]
+output_prefix = "shinobi3"
+jump_table_autodiscovery = false
+
+[ram_layout]
+# The ROM's initial stack vector is zero. The runner's 24-bit bus wraps stack
+# pushes into work RAM. Game-state telemetry addresses were not retained.
+game_mode = 0x000000
+vint_runcount = 0x000000
+vint_routine = 0x000000
+plc_pending = 0x000000
+initial_ssp = 0x000000
+vbla_stack = 0x000000
+intr_stack = 0x000000
+player_object = 0x000000
+level_modes = []
+
+[functions]
+# Reset entry + VBlank entry, followed by retained manually discovered roots.
+extra = [
+  # Reset entry and VBlank handler. $000512 is kept as a validated shared-body
+  # resume alias below; it is not a separate function root.
+  0x000320, 0x000522,
+  # Boot log enters the short RTS veneer at $003E94 and then reaches the
+  # ROM-resident initialization routine at $0069A8. Seed both as native roots
+  # so they do not depend on the Tier-3 floor to cross these early callbacks.
+  0x003E94, 0x0069A8,
+  # Reset setup installs $00FBD6 in the game callback slot at $FF002A and
+  # calls it indirectly at $000508. It is a genuine entry point, not a data
+  # target; compiling it avoids the Tier-3 interpreter capsule's nonlocal
+  # return at $00FE54 during startup.
+  0x00FBD6,
+  # The first title/menu callback is installed in the same callback slot by
+  # $006B42. It dispatches from $FF0032 through a PC-relative branch table.
+  0x00774E,
+  # Main-menu callback installed at $00FEE2; options callback selected by
+  # the title/menu path. These are indirect entries through $FF002A.
+  0x007F56, 0x0086C4,
+    # PEA-installed input processing continuation.
+    0x004DC4,
+  # ROM pointer slots $7742/$774A/$7C68 select game start and the
+  # attract-mode continuation; static call discovery cannot see these.
+  0x00AEDA, 0x007C76, 0x007C90,
+  # $00AF4E installs the level-loading callback after NEW GAME. The
+  # transfer helper chooses the BRA.W veneer at $003E9C indirectly.
+  0x00BA9A, 0x003E9C,
+  # Remaining immediate MOVE.L #entry,$FF002A assignments in this ROM:
+  # gameplay, level change, death/continue, and completion callbacks.
+  # They are installed as data, so ordinary JSR/BSR discovery misses them.
+  0x004CAC, 0x00ADCA, 0x0115C0, 0x011AF2, 0x00F032,
+  0x010436, 0x00F6C0, 0x00B4D2, 0x00B836, 0x022A96, 0x0229D8,
+  # Round 1 callbacks selected indirectly during scene initialization and
+  # frame updates; these are instruction entries, not extension words.
+  0x00303C, 0x001E18, 0x0390F4, 0x000BC8,
+  # $039DC6 dispatches state word $04(A1) to two branch-table entries.
+  # State 0 lands at BRA.W $039DCA -> $039DD0 (initialization);
+  # state 4 lands at BRA.S $039DCE -> $039DA0 (update).
+  # Indexed JMP discovery does not register these standalone trampolines.
+  # Keep the actual branch entries native; do not seed interior body labels.
+  0x039DCA, 0x039DCE,
+  # Sound envelope tables at $69BB4 and $69BCE contain four executable
+  # two-byte RTS/BRA entries each (index byte $1F(A5), doubled).
+  0x069BB4, 0x069BB6, 0x069BB8, 0x069BBA,
+  0x069BCE, 0x069BD0, 0x069BD2, 0x069BD4,
+  # The title-screen wait/update loop at $006EE4 jumps into 21 BRA.W
+  # trampolines, selected in 4-byte steps from $006EFE through $006F4E.
+  # Keep every landing point in the native dispatch table; the PC-indexed
+  # jump starts from the dispatch opcode at $006EFA, so the generic ladder
+  # scanner cannot infer this table's first entry automatically.
+  0x006EFE, 0x006F02, 0x006F06, 0x006F0A, 0x006F0E, 0x006F12, 0x006F16,
+  0x006F1A, 0x006F1E, 0x006F22, 0x006F26, 0x006F2A, 0x006F2E, 0x006F32,
+  0x006F36, 0x006F3A, 0x006F3E, 0x006F42, 0x006F46, 0x006F4A, 0x006F4E,
+  0x001706, 0x0016C6, 0x001728,
+  0x01FD68, 0x021428, 0x021462,
+  0x020F5E, 0x020E14, 0x0204E4,
+  0x020C74, 0x020CFC, 0x01FFDC,
+  0x01FE90, 0x01FF4E, 0x0202BA,
+  0x0212FE, 0x0212A6,
+  # Boss 2 animation callbacks stored in the pointer table at $0365A6.
+  # The old $036954/$036960/$03696C values were LEA operand words.
+  # Decode from $036948 to recover the actual sibling routine starts.
+  0x036948, 0x036952, 0x03695C,
+  0x03696A, 0x036978, 0x036982,
+  # Round 3 Hydra placement/continuation leads retained from the investigation.
+  0x026630, 0x02696C,
+  # Runtime Tier-3 report during Joe's double-tap run: $01FF1A is a valid
+  # routine boundary immediately after RTS at $01FF18. Compile the routine
+  # natively instead of relying on the missing-entry interpreter path.
+  0x01FF1A,
+  # Expert/zero-shuriken jump-and-melee repro reaches these valid object
+  # handler entries through indirect dispatch. The runtime floor interpreter
+  # was entering them mid-frame; compile their actual instruction streams so
+  # object activation/flags stay on the native path.
+  0x0254C4, 0x020F02,
+  0x02C224,
+  0x02C22A,
+  # Stage-2 / act-0 callbacks selected by the original ROM's bounded pointer
+  # tables at $001D5A, $0009C0, and $039602. These entries are reached through
+  # FF007E, FF0082, and FF007A respectively; ordinary JSR discovery misses
+  # all three. Keep the original callback bodies and their state transitions.
+  0x00202C, 0x000FA6, 0x0393CA,
+  # Round 3 Act 1 callbacks selected through the same stage/act callback
+  # tables, plus the stage-scene resource entry selected by $002FA6's ROM
+  # table. These were runtime-observed during Hydra entry and are valid starts.
+  0x00312C, 0x00207C, 0x001036,
+  # Round 4 Act 1's independently selected callbacks: $001D74 -> $0024AE
+  # installs the stage camera/scroll work, $0009DA -> $0010A2 is the
+  # stage-scene frame callback, and $03961E -> $03929E is installed in
+  # $FF007A by $0390AE during startup. These verified entries were all absent
+  # from the prior native dispatch and match the three Act-1 runtime misses.
+  0x0024AE, 0x0010A2, 0x03929E,
+  # Mijin state-handler table entry reached by the verified runtime dispatch
+  # at $0257AC. This is a separate callback target from the R3 graphics fix.
+  0x0257AC,
+  # Stage 2/Act 2 scene callback from the $002FA6 selector table ($002FDC).
+  # It uploads the final-boss arena's custom plane maps; the previous build
+  # omitted this selected target, matching the black-background symptom.
+  0x00319A,
+  # Stage 2/Act 2 per-frame callback selected by $001D0A from $001D5A.
+  # The legal (2,2) stage/act cell is $001D6E -> $002366. This callback
+  # programs the arena's VDP scroll state, updates its F480 buffer, and then
+  # enters the common stage update; preserve it as an exact ROM-selected root.
+  0x002366,
+  # Type-$18 event callback at $013F3A dispatches the object state as a byte
+  # offset from this 4-byte BRA.W table. The state-0 initializer at $013ED2
+  # advances +$04 by four, so every row below is a reachable event state; the
+  # next runtime miss was state-4 row $013ED6 during the Round-4 miniboss.
+  # Seed only the verified instruction starts present in this bounded table.
+  0x013ED2,
+  0x013ED6, 0x013EDA, 0x013EDE, 0x013EE2, 0x013EE6, 0x013EEA,
+  0x013EEE, 0x013EF2, 0x013EF6, 0x013EFA, 0x013EFE, 0x013F02,
+  0x013F06, 0x013F0A, 0x013F0E, 0x013F12, 0x013F16, 0x013F1A,
+  0x013F1E, 0x013F22, 0x013F26, 0x013F2A, 0x013F2E, 0x013F32,
+  0x013F36,
+  # Type-$AC callback selected at $03664E enters $026178. State $0080 selects
+  # row $026202 through the PC-indexed table at $02617C; preserve that handler.
+  0x026202,
+  # The same PC-indexed jump reaches this real RTS when its word selector is
+  # $FFFE, preserving the original no-handler return path seen at runtime.
+  0x026180,
+  # Round 4 Act 2 transition callback selected by $001D76 for stage 3/act 2.
+  0x0023C0,
+  # State-$68 row selected by $02617C for selector-$43 actors; it jumps to
+  # the linked-component updater at $02FCEC. Include its finite +$28 rows and
+  # the nested animation-state destinations used by that family.
+  0x0261EA,
+  0x02FCFE, 0x02FD02, 0x02FD06, 0x02FD0A,
+  0x02FD0E, 0x02FD12, 0x02FD16, 0x02FD1A,
+  0x02FDEA, 0x02FDEE, 0x02FDF2,
+  0x02FE5A, 0x02FE5E, 0x02FE62, 0x02FE66,
+  0x02FFA2, 0x02FFA6, 0x02FFAA, 0x02FFAE,
+  0x02FFB2, 0x02FFB6, 0x02FFBA,
+  0x03022E, 0x030232, 0x030236, 0x03023A, 0x03023E,
+  0x030382, 0x030386,
+  # The transition installs this original VDP interrupt handler at $FF0006.
+  0x02EF80,
+]
+
+# Native action/collision callbacks confirmed by runtime miss PCs during the
+# scripted attacks. These are alternate object-handler entries inside nearby
+# routines, plus standalone handlers at boundaries following explicit RTSs.
+# Keep them late so their direct call/branch closure is included without
+# speculative jump-table discovery from unrelated code.
+late_extra = [
+  # Round 4 demo jump/attack path dispatches this action-state callback;
+  # codegen emitted it as a standalone entry with no entry-alignment warning.
+  0x020B28, 0x020C2C, 0x020D12, 0x020D2E, 0x024D38, 0x024EB2,
+  0x02512A, 0x025158, 0x0251BE, 0x025254, 0x0252D4, 0x0252E4,
+  0x0254D8, 0x025580, 0x0255B4,
+  # Alternate movement flag entries used by crouching/projectile actions.
+  0x020D18, 0x020D34,
+  # Object unlink/free callback and animation update entry.
+  0x0018A2, 0x024B5E,
+  # Runtime entries reached by R1 melee, crouched/downward movement, and
+  # the repeated shuriken-blast sequence. These are instruction boundaries.
+  0x02517E, 0x020CF6, 0x025214, 0x0251EE,
+  # Round 1 stage handoff writes VDP control registers and switches the
+  # scene's callbacks. These runtime dispatch entries were missing natively.
+  0x001E88, 0x000C5C, 0x020306, 0x0201C0,
+  0x020656, 0x021222,
+  # Forest-demo action callback: static decode starts after an RTS and updates
+  # object flags/state before dispatching follow-on handlers.
+  0x0200A4,
+  # Attack-object initialization and its player movement callback, reached
+  # by the complete attract cycle. Each is a decoded instruction boundary.
+  0x025018, 0x0250C6, 0x0250DC, 0x025294, 0x020E04, 0x020380,
+  # $02617C dispatches to the BRA.W entry at $02621A -> $026E80.
+  0x02621A, 0x02621E,
+  # Round 4 H-interrupt setup and native targets of the RAM JMP at $FF0004.
+  0x002386, 0x0005B4, 0x00249A,
+  # VERIFIED ROM starts: Round 2 asset/scroll setup, mounted action and RTS callback.
+  0x0030F4, 0x0205AE, 0x001ED4, 0x000A00,
+  # Verified Joe-action and attack-object table targets; mounted gameplay trial.
+  0x020358, 0x0203A8, 0x0204E0, 0x0206B2, 0x0208F8, 0x020994,
+  0x020C50, 0x020D8A, 0x020D90, 0x020DF4, 0x020E98, 0x020ED2,
+  0x020ED8, 0x02119A, 0x024DCC, 0x024F58, 0x024F98, 0x024FD8,
+  0x025058, 0x02506E, 0x02537C, 0x025392, 0x025444, 0x025484,
+  0x025BFC, 0x025CC0,
+  # Round 2 Stage 2 data/visual setup plus regular scroll callback entries.
+  0x00310C, 0x001F52, 0x001F68, 0x001F84, 0x000D38,
+  # The $02DB24 actor-state JMP selects $02DB48 at state $20. This verified
+  # BRA.W row enters the authentic transition handler at $02DF26.
+  # When that handler reaches its coordinate gate it advances state to $24;
+  # the next verified table row $02DB4C enters $02DF86.
+  # State $28 selects the verified BRA.W row at $02DB50 -> $02E106.
+  # Compile this exact row so its authentic handler remains on the native path.
+  0x02DB48, 0x02DB4C, 0x02DB50,
+  # Sound command 0 selects $06A838 -> $06AC2A. Compile the complete FM
+  # setup/loop so its prologue initializes A1 and D3 before $06AC34.
+  # The observed nested selector $FF at $06A834 computes exact entry $06AC34.
+  0x06AC2A, 0x06AC34,
+  # Round-5 Act-1 camera selector $00254A stores a ROM-table-selected
+  # callback from $00253A into $FF007E. Its four rows select $00255E
+  # (states 0-2) or $002570 (state 3); each calls shared scroll helper
+  # $002582, which reaches the existing $001DFE calculation. These indirect
+  # callback targets were the exact Tier-3 floor entries during Act 1.
+  0x00255E, 0x002570,
+  # Round 6 paths selected by the original stage/act callback tables.
+  # $001E16 is the empty Act-3 RTS callback; $00326C is the Act-2 VDP
+  # fill callback; Round 6 Act 0 selects scene loader $003292 and camera
+  # updater $00261C. Keep their existing RTS/tail-JMP semantics.
+  # Round 6 Act 1 selects scene-frame callback $001120 through $FF0082 and
+  # camera updater $002710 through $FF007E. The former returns through the
+  # original tail-JMP callback path; the latter tail-jumps into $003516 after
+  # updating the stage scroll work values.
+  # Round 6 Act 2 selects camera callback $002776 through $FF007E. It is a
+  # separate RTS routine that initializes the boss-room scroll work values.
+  # Round 7 (stage index 6), Act 0 selects scene callback $00114C through
+  # FF0082, camera callback $0027AA through FF007E, and resource callback
+  # $0032B2 through the stage/act JMP selector at $002FA6. Preserve the scene
+  # callback's tail-dispatch return, the camera callback's ordinary JSR/RTS,
+  # and the resource callback's tail-transfer into the shared loader.
+  0x001E16, 0x001120, 0x00114C, 0x00261C, 0x002710, 0x002776,
+  # $0027AA's zone switch is a PC-indexed table of four BRA.W veneers at
+  # $00279A/$00279E/$0027A2/$0027A6. Keep those actual indirect JMP targets
+  # in native dispatch; each tail-branches to the corresponding zone handler.
+  0x00279A, 0x00279E, 0x0027A2, 0x0027A6,
+  0x0027AA, 0x00326C, 0x003292, 0x0032B2,
+  # Round 7 Act 1 selects scene callback $0011E0 through FF0082 and camera
+  # callback $00291C through FF007E. $00303C is its shared resource callback.
+  0x0011E0, 0x00291C,
+  # Round 7 Act 2 selects final-boss scene, camera, and resource callbacks.
+  0x0012B0, 0x00295E, 0x0032E6,
+  # Object table index $0100 selects this animation handler from the pointer table
+  # at $0365A2. The scheduler calls it through JSR (A6), and the handler's
+  # PC-indexed state ladder selects its native animation/setup branches.
+  0x0107F2,
+  # $0107F8 jumps into three BRA.W veneers immediately before the handler
+  # root. The object state selects these by +0/+4/+8; keep the selected
+  # continuations as native tail-dispatch targets so each state body runs
+  # with the scheduler's live A0 and original stack.
+  0x0107E6, 0x0107EA, 0x0107EE,
+  # The veneer destinations are distinct RTS-terminated object-state bodies.
+  # They are selected by the live callback's PC-indexed JMP and return through
+  # the scheduler's existing JSR(A6) frame.
+  0x01083C, 0x010948, 0x010976
+  # The ending timeline installs this HBlank RTE handler into FF0006 at
+  # $0105EE. Its native entry is required for the later raster phase.
+  ,0x010A02
+]
+
+# This table-dispatched entry is an instruction inside the $001F68 body.
+# Codegen validates the boundary/owner pair and emits a shared-body wrapper.
+[[functions.interior_alias]]
+entry = 0x001F7E
+owner = 0x001F68
+
+# Round 2 boss neutral-flight script: command $60 in the original active
+# reference computes a JMP to this instruction inside the $02C224 body.
+[[functions.interior_alias]]
+entry = 0x02C22A
+owner = 0x02C224
+
+# The rooted FF command stream selects $06A82E through the PC-indexed JMP at
+# $06A7AE. Keep this exact ROM-proven computed edge in the $06A7A8 body.
+[[functions.interior_alias]]
+entry = 0x06A82E
+owner = 0x06A7A8
+jump = 0x06A7AE
+
+# Subcommand 01 at the nested PC-indexed JMP selects the BRA.W at $06A83C.
+[[functions.interior_alias]]
+entry = 0x06A83C
+owner = 0x06A7A8
+jump = 0x06A834
+
+# Subcommand 00 selects the first row of the same nested PC-indexed JMP.
+[[functions.interior_alias]]
+entry = 0x06A838
+owner = 0x06A7A8
+jump = 0x06A834
+
+# Object state 0x14 selects $01F98C from the PC-indexed JMP at $01F974.
+# Keep it in the $01F970 execution body so A0 and the existing caller stack
+# remain intact while the state advances and dispatches to $01FB06.
+[[functions.interior_alias]]
+entry = 0x01F98C
+owner = 0x01F970
+jump = 0x01F974
+
+# The next stage-resource preloader is an object state selected by the
+# computed JMP at $01FBA8. Keep its stage increment, shared loader call, and
+# ordinary RTS in the existing $01FBA4 body with A0/A7 intact.
+[[functions.interior_alias]]
+entry = 0x01FBAC
+owner = 0x01FBA4
+jump = 0x01FBA8
+
+# Object state +$08 selects $01FBB4 from the same computed JMP. Keep this
+# BRA.W in the $01FBA4 body so it retains the live object register and caller
+# stack before tail-entering the shared actor update at $01FBE6.
+[[functions.interior_alias]]
+entry = 0x01FBB4
+owner = 0x01FBA4
+jump = 0x01FBA8
+
+# The reset routine's steady-state poll loop starts here. Resume from this
+# exact instruction after loading: the restored callback in $FF002A runs on
+# the next frame without replaying reset/setup code.
+[[functions.interior_alias]]
+entry = 0x000512
+owner = 0x000320
+
+# Sound-driver PC-indexed table retained from the prior build notes. The
+# fallback behavior used by the former project is not present in the restored
+# upstream engine, so this table is intentionally not declared as a manual
+# jump table until that behavior is reimplemented and tested.
+
+# VERIFIED ROM instruction ladder: eight six-byte JMP abs.l rows.
+# Existing bra_w format enumerates instruction-row addresses, independent of opcode.
+[[jump_table]]
+start = 0x02A4D4
+end = 0x02A504
+stride = 6
+format = "bra_w"

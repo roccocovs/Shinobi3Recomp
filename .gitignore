@@ -1,0 +1,67 @@
+# Local build trees and generated translations
+/build/
+/build-*/
+/bld-*/
+/dist-*/
+/cmake-build-*/
+/project/build/
+/project/generated/
+/project/game/generated/
+/package/
+Shinobi3Recomp.exe
+Shinobi3Recomp.pdb
+shinobi3_part*.c
+shinobi3_decls.h
+shinobi3_dispatch.c
+shinobi3_layout.c
+shinobi3_cycles.c
+shinobi3_dispatch_audit.log
+shinobi3.unresolved_jumptables.log
+
+# Proprietary user-supplied game data and private ROM research
+/private-analysis/
+/project/game/*.gen
+/project/game/*.rom
+/project/game/*.smd
+*.gen
+*.rom
+*.smd
+*.iso
+*.cue
+*.bin
+native_save_*
+ramdump_*
+states/
+
+# Runtime diagnostics and captures
+*.jsonl
+*.vdp.bin
+*.trace
+*.log
+dispatch_misses.toml
+floor_coverage.toml
+runtime_evidence/
+captures/
+screenshots/
+
+# Local tool caches and build products
+**/__pycache__/
+*.py[cod]
+*.obj
+*.o
+*.pdb
+*.dbg
+*.ilk
+*.tmp
+*.bak
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# Local machine and assistant-only state
+.codex/
+.agents/
+CLAUDE.local.md
+local-paths.txt

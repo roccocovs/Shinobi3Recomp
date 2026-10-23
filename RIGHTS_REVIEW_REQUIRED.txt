@@ -1,0 +1,7 @@
+SOURCE DISTRIBUTION AND RELEASE SCOPE
+
+The GitHub source repository excludes the Sega ROM, generated Shinobi game C translations, compiled Shinobi3Recomp.exe, extracted game assets, private saves, and development captures. It includes audited game-specific functional configuration and integration code by the author's decision.
+
+A separate GitHub Windows Release package is planned and contains a precompiled executable with statically translated ROM-derived 68000 instructions. The package does not include a ROM; users must provide a compatible image at runtime. See docs/PUBLISHING.md and docs/REDISTRIBUTION-REVIEW.md for the distinction between source contents and the binary release.
+
+Top-level LICENSE.md applies only to roccocovs's original contributions to the extent of that authorship. Preserve Matthew Stan's Genesis Recompiler terms and all third-party licenses. Neither the project license nor a user-supplied-ROM requirement grants rights to Sega material. No Sega affiliation, permission, or endorsement is claimed.
