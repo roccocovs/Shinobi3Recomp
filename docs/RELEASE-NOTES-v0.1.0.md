@@ -1,4 +1,4 @@
-# Shinobi3Recomp — v0.1.0 (proposed initial release)
+# Shinobi3Recomp — v0.1.0 (Initial Windows Release)
 
 Shinobi3Recomp is an unofficial native Windows application for *Shinobi III: Return of the Ninja Master*, generated with a modified Matthew Stan Genesis Recompiler and the project's Windows runtime. The executable includes statically translated 68000 game instructions; it also requires a compatible user-supplied ROM for game data and runtime behavior. Not every guest instruction is necessarily executed as generated native code.
 
@@ -8,14 +8,19 @@ The release package is intended for Windows x64. Extract it, launch `Shinobi3Rec
 
 ## Verification status
 
-An earlier accepted build was personally played through all seven rounds, the final boss, ship-crash ending, and into the horseback credits with the interpreter floor disabled. This staged executable is the unchanged output of the independent clean regeneration build and passed the source candidate's previously completed 37/37 non-gameplay CTests; it has not been separately gameplay-tested. The entire post-credits sequence is not verified.
+Shinobi3Recomp is fully playable from beginning to end. All seven rounds and the complete ending sequence have been verified during development testing.
+
+The v0.1.0 executable has also been successfully tested on a separate Windows 11 laptop, confirming functional graphics, audio, keyboard controls, and DualSense controller support. This was a portability and gameplay test, not a second full playthrough.
+
+The source candidate previously passed all 37 non-gameplay regression tests, with nine gameplay-launching tests excluded.
 
 ## Known issues
 
-- Minor slowdown has been observed in the Round 1 and final-boss encounters.
-- The gameplay impact of a Mijin-related dispatch warning remains unconfirmed.
-- Complete post-credits behavior has not been verified.
-- The graphical local builder is not implemented; developers building from source need the documented toolchain.
+- A Mijin-related dispatch warning was observed; its gameplay impact remains unverified.
+- A graphical local build utility is not implemented. Building from source requires the documented development toolchain.
+
+Minor compatibility, performance, or timing differences from original Sega Genesis hardware may remain.
+
 
 ## Source and licensing
 
