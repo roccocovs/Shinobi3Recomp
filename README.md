@@ -11,6 +11,8 @@ Shinobi3Recomp is an unofficial native Windows recompilation of *Shinobi III: Re
 
 The release does not include a ROM. The supported image is 1 MiB with SHA-256 `E0C50ED80FA1B75325344C2260A26841936D077E2AE1689C2522E3CC484739E3`. The executable requires that ROM at runtime; a file picker does not make it ROM-independent.
 
+Sega Classics compatibility: The SHINOBI3_U.68K ROM included with the Steam release of SEGA Mega Drive & Genesis Classics has been successfully tested with Shinobi3Recomp. Users who already own that release can use their compatible ROM file. No conversion is required.
+
 ## Build from source
 
 Developers may clone this source repository, provide the compatible ROM locally, and follow [the Windows build guide](docs/BUILDING.md). The build generates game C and a playable executable locally. The source repository does not commit the ROM, generated Shinobi C, or compiled executable.
