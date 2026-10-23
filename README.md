@@ -25,9 +25,7 @@ Keyboard and gamepad inputs are enabled. Arrow keys move; `Z`, `X`, `C` map to G
 
 ## Known limitations
 
-- Minor slowdown has been observed during the Round 1 and final-boss encounters.
 - A Mijin-related dispatch warning was observed; its gameplay impact remains unverified.
-- The full post-credits sequence has not been verified.
 - A graphical local build utility is not implemented. Source builds require the toolchain in [docs/BUILDING.md](docs/BUILDING.md).
 
 ## Architecture
